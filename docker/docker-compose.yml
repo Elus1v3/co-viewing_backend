@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  
+  postgres_co-viewing:
+    image: postgres:17
+    environment: 
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    volumes:
+      - ../migrations/000001_init.up.sql:/docker-entrypoint-initdb.d/000001_init.up.sql
+      - postgres_co-viewing_data:/var/lib/postgresql/data
+    networks:
+      - co-viewing_network
+
+
+  co-viewing_service_app:
+    build:
+      context: ..
+      dockerfile: docker/dockerfile
+    ports:
+      - "9090:9090"
+    env_file:
+      - .env
+    depends_on:
+      - postgres_co-viewing
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+    networks:
+      - co-viewing_network
+    restart: unless-stopped
+
+volumes:
+  postgres_co-viewing_data:
+
+networks:
+  co-viewing_network:
+    driver: bridge
