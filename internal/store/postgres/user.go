@@ -36,3 +36,33 @@ func (s *UserStore) Create(ctx context.Context, user models.User) (int, error) {
 	slog.Info("user created", "id", id)
 	return id, nil
 }
+
+func (s *UserStore) FindByNickname(ctx context.Context, nickname string) (bool, error) {
+	sqlQuery := `
+		SELECT EXISTS(SELECT 1 FROM "User" WHERE nickname = $1)
+	`
+
+	var exists bool
+	err := s.conn.QueryRow(ctx, sqlQuery, nickname).Scan(&exists)
+	if err != nil {
+		slog.Error("find user failed", "error", err)
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (s *UserStore) GetPassword(ctx context.Context, nickname string) (string, error) {
+	sqlQuery := `
+		SELECT password FROM "User" WHERE nickname = $1
+	`
+
+	var password string
+	err := s.conn.QueryRow(ctx, sqlQuery, nickname).Scan(&password)
+	if err != nil {
+		slog.Error("failed get password", "error", err)
+		return "", err
+	}
+
+	return password, nil
+}

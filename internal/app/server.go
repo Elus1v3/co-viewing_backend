@@ -36,11 +36,10 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить всем (небезопасно для продакшена)
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, PATCH, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-		// Если это Preflight запрос, просто отвечаем OK
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -53,7 +52,8 @@ func corsMiddleware(next http.Handler) http.Handler {
 func NewRouter(h *handler.UserHandler) http.Handler {
 	router := mux.NewRouter()
 
-	router.Path("/api/co-viewing/users").Methods("POST").HandlerFunc(h.HandleCreate)
+	router.Path("/api/co-viewing/users/signup").Methods("POST").HandlerFunc(h.HandleCreate)
+	router.Path("/api/co-viewing/users/signin").Methods("POST").HandlerFunc(h.HandleSignIn)
 
 	return corsMiddleware(loggingMiddleware(router))
 }
