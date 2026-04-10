@@ -74,7 +74,7 @@ func (s *Store) GetAllUsers(ctx context.Context) ([]models.User, error) {
 		var u models.User
 		err := rows.Scan(&u.Id, &u.Nickname, &u.Password)
 		if err != nil {
-			slog.Error("error read user", "error", err)
+			slog.Error("error scan user", "error", err)
 			return nil, err
 		}
 		users = append(users, u)

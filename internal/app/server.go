@@ -56,5 +56,7 @@ func NewRouter(h *handler.Handler) http.Handler {
 	router.Path("/api/co-viewing/users/signin").Methods("POST").HandlerFunc(h.HandleSignIn)
 	router.Path("/api/co-viewing/users").Methods("GET").HandlerFunc(h.HandleGetAllUsers)
 	router.Path("/api/co-viewing/friends").Methods("POST").HandlerFunc(h.HandleCreateFriendRequest)
+	router.Path("/api/co-viewing/friends/{id}").Methods("GET").HandlerFunc(h.HandleGetFriendRequests)
+	router.Path("/api/co-viewing/friends").Methods("PATCH").HandlerFunc(h.HandlePatchFriendRequest)
 	return corsMiddleware(loggingMiddleware(router))
 }
