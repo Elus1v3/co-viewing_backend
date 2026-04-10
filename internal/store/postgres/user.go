@@ -56,3 +56,29 @@ func (s *Store) GetPassword(ctx context.Context, nickname string) (models.User, 
 
 	return user, nil
 }
+
+func (s *Store) GetAllUsers(ctx context.Context) ([]models.User, error) {
+	sqlQuery := `
+		SELECT * FROM "user"
+	`
+
+	var users []models.User
+	rows, err := s.conn.Query(ctx, sqlQuery)
+	if err != nil {
+		slog.Error("failed get users", "error", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var u models.User
+		err := rows.Scan(&u.Id, &u.Nickname, &u.Password)
+		if err != nil {
+			slog.Error("error read user", "error", err)
+			return nil, err
+		}
+		users = append(users, u)
+	}
+
+	return users, nil
+}

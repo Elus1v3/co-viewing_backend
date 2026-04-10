@@ -65,3 +65,7 @@ func (s *Service) SignIn(ctx context.Context, user models.User) (models.User, er
 	slog.Info("user is sign in")
 	return UserWithPassword, nil
 }
+
+func (s *Service) GetAllUsers(ctx context.Context) ([]models.User, error) {
+	return s.store.GetAllUsers(ctx)
+}

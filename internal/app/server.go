@@ -52,8 +52,9 @@ func corsMiddleware(next http.Handler) http.Handler {
 func NewRouter(h *handler.Handler) http.Handler {
 	router := mux.NewRouter()
 
-	router.Path("/api/co-viewing/users/signup").Methods("POST").HandlerFunc(h.HandleCreate)
+	router.Path("/api/co-viewing/users/signup").Methods("POST").HandlerFunc(h.HandleCreateUser)
 	router.Path("/api/co-viewing/users/signin").Methods("POST").HandlerFunc(h.HandleSignIn)
-
+	router.Path("/api/co-viewing/users").Methods("GET").HandlerFunc(h.HandleGetAllUsers)
+	router.Path("/api/co-viewing/friends").Methods("POST").HandlerFunc(h.HandleCreateFriendRequest)
 	return corsMiddleware(loggingMiddleware(router))
 }

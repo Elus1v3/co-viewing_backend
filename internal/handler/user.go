@@ -13,7 +13,7 @@ func writeJSONError(w http.ResponseWriter, status int, msg string) {
 	})
 }
 
-func (h *Handler) HandleCreate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var user models.User
@@ -34,7 +34,7 @@ func (h *Handler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 
 	id, err := h.svc.Create(ctx, user)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		writeJSONError(w, http.StatusInternalServerError, "database error")
 		return
 	}
 
@@ -63,11 +63,25 @@ func (h *Handler) HandleSignIn(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.svc.SignIn(ctx, user)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		writeJSONError(w, http.StatusInternalServerError, "database error")
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]int{"id": user.Id})
+}
+
+func (h *Handler) HandleGetAllUsers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	users, err := h.svc.GetAllUsers(ctx)
+	if err != nil {
+		writeJSONError(w, http.StatusInternalServerError, "database error")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(users)
 }
