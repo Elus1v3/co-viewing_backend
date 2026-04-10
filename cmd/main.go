@@ -55,11 +55,11 @@ func main() {
 	defer conn.Close()
 	slog.Info("connected to database")
 
-	userRepo := postgres.NewUserStore(conn)
+	userRepo := postgres.NewStore(conn)
 
-	userService := service.NewUserService(userRepo)
+	userService := service.NewService(userRepo)
 
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewHandler(userService)
 
 	srv := &http.Server{
 		Addr:    ":9090",

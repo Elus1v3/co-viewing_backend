@@ -49,7 +49,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func NewRouter(h *handler.UserHandler) http.Handler {
+func NewRouter(h *handler.Handler) http.Handler {
 	router := mux.NewRouter()
 
 	router.Path("/api/co-viewing/users/signup").Methods("POST").HandlerFunc(h.HandleCreate)

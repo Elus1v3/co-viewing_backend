@@ -2,18 +2,9 @@ package handler
 
 import (
 	"co-viewing/internal/models"
-	"co-viewing/internal/service"
 	"encoding/json"
 	"net/http"
 )
-
-type UserHandler struct {
-	svc *service.UserService
-}
-
-func NewUserHandler(svc *service.UserService) *UserHandler {
-	return &UserHandler{svc: svc}
-}
 
 func writeJSONError(w http.ResponseWriter, status int, msg string) {
 	w.WriteHeader(status)
@@ -22,7 +13,7 @@ func writeJSONError(w http.ResponseWriter, status int, msg string) {
 	})
 }
 
-func (h *UserHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var user models.User
@@ -52,7 +43,7 @@ func (h *UserHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]int{"id": id})
 }
 
-func (h *UserHandler) HandleSignIn(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleSignIn(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var user models.User
@@ -70,7 +61,7 @@ func (h *UserHandler) HandleSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.svc.SignIn(ctx, user)
+	user, err := h.svc.SignIn(ctx, user)
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -78,5 +69,5 @@ func (h *UserHandler) HandleSignIn(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"signin": "successful"})
+	json.NewEncoder(w).Encode(map[string]int{"id": user.Id})
 }

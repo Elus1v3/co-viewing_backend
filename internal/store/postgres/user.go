@@ -4,21 +4,11 @@ import (
 	"co-viewing/internal/models"
 	"context"
 	"log/slog"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type UserStore struct {
-	conn *pgxpool.Pool
-}
-
-func NewUserStore(conn *pgxpool.Pool) *UserStore {
-	return &UserStore{conn: conn}
-}
-
-func (s *UserStore) Create(ctx context.Context, user models.User) (int, error) {
+func (s *Store) Create(ctx context.Context, user models.User) (int, error) {
 	sqlQuery := `
-		INSERT INTO "User" (nickname, password)
+		INSERT INTO "user" (nickname, password)
 		VALUES ($1, $2)
 		RETURNING id_pk;
 	`
@@ -37,9 +27,9 @@ func (s *UserStore) Create(ctx context.Context, user models.User) (int, error) {
 	return id, nil
 }
 
-func (s *UserStore) FindByNickname(ctx context.Context, nickname string) (bool, error) {
+func (s *Store) FindByNickname(ctx context.Context, nickname string) (bool, error) {
 	sqlQuery := `
-		SELECT EXISTS(SELECT 1 FROM "User" WHERE nickname = $1)
+		SELECT EXISTS(SELECT 1 FROM "user" WHERE nickname = $1)
 	`
 
 	var exists bool
@@ -52,17 +42,17 @@ func (s *UserStore) FindByNickname(ctx context.Context, nickname string) (bool, 
 	return exists, nil
 }
 
-func (s *UserStore) GetPassword(ctx context.Context, nickname string) (string, error) {
+func (s *Store) GetPassword(ctx context.Context, nickname string) (models.User, error) {
 	sqlQuery := `
-		SELECT password FROM "User" WHERE nickname = $1
+		SELECT password, id_pk FROM "user" WHERE nickname = $1
 	`
 
-	var password string
-	err := s.conn.QueryRow(ctx, sqlQuery, nickname).Scan(&password)
+	var user models.User
+	err := s.conn.QueryRow(ctx, sqlQuery, nickname).Scan(&user.Password, &user.Id)
 	if err != nil {
 		slog.Error("failed get password", "error", err)
-		return "", err
+		return models.User{}, err
 	}
 
-	return password, nil
+	return user, nil
 }

@@ -16,3 +16,11 @@ func NewConnection(url string, ctx context.Context) (*pgxpool.Pool, error) {
 	}
 	return conn, nil
 }
+
+type Store struct {
+	conn *pgxpool.Pool
+}
+
+func NewStore(conn *pgxpool.Pool) *Store {
+	return &Store{conn: conn}
+}
