@@ -3,6 +3,7 @@ package handler
 import (
 	"co-viewing/internal/models"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 )
 
@@ -19,22 +20,26 @@ func (h *Handler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		writeJSONError(w, http.StatusBadRequest, "invalid json")
+		slog.Error("error", "invalid json", err)
 		return
 	}
 
 	if len(user.Nickname) > 20 || user.Nickname == "" {
 		writeJSONError(w, http.StatusBadRequest, "nickname not contain over 20 symbols or empty string")
+		slog.Error("error", "nickname not contain over 20 symbols or empty string", user.Nickname)
 		return
 	}
 
 	if len(user.Password) > 255 || user.Password == "" {
 		writeJSONError(w, http.StatusBadRequest, "password not contain over 255 symbols or empty string")
+		slog.Error("password not contain over 255 symbols or empty string")
 		return
 	}
 
 	id, err := h.svc.Create(ctx, user)
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, "database error")
+		slog.Error("error", "database error", err)
 		return
 	}
 
@@ -49,21 +54,25 @@ func (h *Handler) HandleSignIn(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		writeJSONError(w, http.StatusBadRequest, "invalid json")
+		slog.Error("error", "invalid json", err)
 	}
 
 	if len(user.Nickname) > 20 || user.Nickname == "" {
 		writeJSONError(w, http.StatusBadRequest, "nickname not contain over 20 symbols or empty string")
+		slog.Error("error", "nickname not contain over 20 symbols or empty string", user.Nickname)
 		return
 	}
 
 	if len(user.Password) > 255 || user.Password == "" {
 		writeJSONError(w, http.StatusBadRequest, "password not contain over 255 symbols or empty string")
+		slog.Error("password not contain over 255 symbols or empty string")
 		return
 	}
 
 	user, err := h.svc.SignIn(ctx, user)
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, "database error")
+		slog.Error("error", "database error", err)
 		return
 	}
 
@@ -78,6 +87,7 @@ func (h *Handler) HandleGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.svc.GetAllUsers(ctx)
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, "database error")
+		slog.Error("error", "database error", err)
 		return
 	}
 

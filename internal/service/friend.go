@@ -13,6 +13,14 @@ func (s *Service) GetFriendRequestsFromId(ctx context.Context, receivingUserId i
 	return s.store.GetFriendRequestsFromId(ctx, receivingUserId)
 }
 
+func (s *Service) GetAllFriendsFromId(ctx context.Context, currentUserId int) ([]models.User, error) {
+	return s.store.GetFriendList(ctx, currentUserId)
+}
+
 func (s *Service) UpdateFriendRequest(ctx context.Context, request models.FriendRequest) error {
 	return s.store.UpdateFriendRequest(ctx, request)
+}
+
+func (s *Service) DeleteFriendReequest(ctx context.Context, request models.FriendRequest) error {
+	return s.store.DeleteFriendRequest(ctx, request)
 }
