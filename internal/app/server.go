@@ -60,6 +60,8 @@ func NewRouter(h *handler.Handler) http.Handler {
 	router.Path("/api/co-viewing/friends/{id}/list").Methods("GET").HandlerFunc(h.HandleGetAllFriends)
 	router.Path("/api/co-viewing/friends").Methods("PATCH").HandlerFunc(h.HandlePatchFriendRequest)
 	router.Path("/api/co-viewing/friends").Methods("DELETE").HandlerFunc(h.HandleDeleteFriendRequest)
+	router.Path("/api/co-viewing/movies").Methods("POST").HandlerFunc(h.HandleAddWatchedMovie)
+	router.Path("/api/co-viewing/movies/{id}").Methods("GET").HandlerFunc(h.HandleGetAllWatchedMovies)
 
 	return corsMiddleware(loggingMiddleware(router))
 }

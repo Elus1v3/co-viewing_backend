@@ -10,7 +10,7 @@ import (
 func (s *Store) CreateFriendRequest(ctx context.Context, sendingUserId int, receivingUserId int) error {
 	sqlQuery := `
 		INSERT INTO user_friends (user_id_fk, friend_id_fk, status)
-		VALUES ($1, $2, 'pending')
+		VALUES ($1, $2, 'pending');
 	`
 
 	commandTag, err := s.conn.Exec(ctx, sqlQuery, sendingUserId, receivingUserId)
@@ -96,7 +96,7 @@ func (s *Store) UpdateFriendRequest(ctx context.Context, request models.FriendRe
 		UPDATE user_friends
 		SET status = 'accepted'
 		WHERE user_id_fk = $1 
-		AND friend_id_fk = $2
+		AND friend_id_fk = $2;
 	`
 
 	commandTag, err := s.conn.Exec(ctx, sqlQuery, request.UserId, request.FriendId)

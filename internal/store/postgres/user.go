@@ -29,7 +29,7 @@ func (s *Store) Create(ctx context.Context, user models.User) (int, error) {
 
 func (s *Store) FindByNickname(ctx context.Context, nickname string) (bool, error) {
 	sqlQuery := `
-		SELECT EXISTS(SELECT 1 FROM "user" WHERE nickname = $1)
+		SELECT EXISTS(SELECT 1 FROM "user" WHERE nickname = $1);
 	`
 
 	var exists bool
@@ -44,7 +44,7 @@ func (s *Store) FindByNickname(ctx context.Context, nickname string) (bool, erro
 
 func (s *Store) GetPassword(ctx context.Context, nickname string) (models.User, error) {
 	sqlQuery := `
-		SELECT password, id_pk FROM "user" WHERE nickname = $1
+		SELECT password, id_pk FROM "user" WHERE nickname = $1;
 	`
 
 	var user models.User
@@ -59,7 +59,7 @@ func (s *Store) GetPassword(ctx context.Context, nickname string) (models.User, 
 
 func (s *Store) GetAllUsers(ctx context.Context) ([]models.User, error) {
 	sqlQuery := `
-		SELECT * FROM "user"
+		SELECT * FROM "user";
 	`
 
 	var users []models.User
